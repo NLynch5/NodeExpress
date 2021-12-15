@@ -16,12 +16,15 @@ const User = require("../user/userModel");
 
 exports.hashPassword = async (req, res, next) => {
   try {
+    const password = await req.body.password;
     req.body.password = await bcrypt.hash(req.body.password, 8);
-    const match = await bcrypt.compare(req.body.password, user.password);
+    const match = await bcrypt.compare(password, req.body.password);
     if (match) {
       res.status(200).send({ message: "Bingo!" });
+      console.log("Password matches");
     } else {
       res.status(500).send({ message: "Error in password, please try again" });
+      console.log("Password does not match");
     }
     next();
   } catch (error) {
