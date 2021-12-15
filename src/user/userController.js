@@ -15,12 +15,10 @@ exports.addUser = async (req, res) => {
 };
 
 //similar to CRUD - READ (GET)
-exports.listUser = async () => {
+exports.listUser = async (req, res) => {
   try {
-    User.get("users", async (req, res) => {
-      const users = await User.find(req.body);
-      res.send({ message: "List of all users" });
-    });
+    const users = await User.find();
+    res.status(200).send({ message: "List of all users", users });
   } catch (error) {
     console.log(error);
   }
@@ -29,18 +27,23 @@ exports.listUser = async () => {
 //similar to CRUD - UPDATE (PUT/PATCH)
 exports.updateUser = async (req, res) => {
   try {
-    const updateUser = await User.findByIdAndUpdate(req.body_id, req_body);
+    updateUser = await User.findByIdAndUpdate(req.body._id, req.body);
+    updateUser = await User.findById(req.body._id);
+    res.status(200).send({ message: "Updated user", updateUser });
   } catch (error) {
     console.log(error);
   }
 };
 
-//similar to CRUD - DELETE (DELETE)
-exports.deleteUser = async (User) => {
+// //similar to CRUD - DELETE (DELETE)
+exports.deleteUser = async (req, res) => {
   try {
-    await User.deleteOne(User);
-    mongoose.connecton.close(); // do i need this?
+    deleteUser = await User.deleteOne(req.params.body);
+    res.status(200).send({ message: "User Deleted", deleteUser });
   } catch (error) {
     console.log(error);
   }
 };
+
+//check connection in terminal using node src/server.js - once connection is succeessfully established then
+//test using GET/POST etc in Insomnia before checking the database has changed correctly in MongoDB/Mongoose
